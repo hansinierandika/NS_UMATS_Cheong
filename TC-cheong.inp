@@ -1,0 +1,178 @@
+*Heading
+** Job name: element-3D Model name: Model-1
+*Preprint, echo=NO, model=NO, history=NO, contact=NO
+**
+** PARTS
+**
+*Part, name=ELEMENT-3D
+*End Part
+**
+** ASSEMBLY
+**
+*Assembly, name=Assembly
+**  
+*Instance, name=ELEMENT-3D-1, part=ELEMENT-3D
+*Node
+      1,           1.,           1.,           1.
+      2,           1.,           0.,           1.
+      3,           1.,           1.,           0.
+      4,           1.,           0.,           0.
+      5,           0.,           1.,           1.
+      6,           0.,           0.,           1.
+      7,           0.,           1.,           0.
+      8,           0.,           0.,           0.
+      9,           0.,           1.,          0.5
+     10,           0.,          0.5,           0.
+     11,           0.,           0.,          0.5
+     12,           0.,          0.5,           1.
+     13,           1.,          0.5,           1.
+     14,           1.,           0.,          0.5
+     15,           1.,          0.5,           0.
+     16,           1.,           1.,          0.5
+     17,          0.5,           0.,           1.
+     18,          0.5,           1.,           1.
+     19,          0.5,           0.,           0.
+     20,          0.5,           1.,           0.
+*Element, type=C3D20R
+1,  5,  6,  8,  7,  1,  2,  4,  3, 12, 11, 10,  9, 13, 14, 15,
+   16, 18, 17, 19, 20
+** Region: (Section-1:Picked)
+*Elset, elset=_PickedSet2, internal
+ 1,
+** Section: Section-1
+*Solid Section, elset=_PickedSet2, material=NOR-SAND
+1.,
+*End Instance
+*Nset, nset=ALLN, instance=ELEMENT-3D-1, generate
+  1,  20,   1
+*Elset, elset=ALLN, instance=ELEMENT-3D-1
+ 1,
+*Nset, nset=S1, instance=ELEMENT-3D-1
+  1,  3,  5,  7,  9, 16, 18, 20
+*Elset, elset=S1, instance=ELEMENT-3D-1
+ 1,
+*Nset, nset=S2, instance=ELEMENT-3D-1
+  1,  2,  5,  6, 12, 13, 17, 18
+*Elset, elset=S2, instance=ELEMENT-3D-1
+ 1,
+*Nset, nset=S3, instance=ELEMENT-3D-1
+  1,  2,  3,  4, 13, 14, 15, 16
+*Elset, elset=S3, instance=ELEMENT-3D-1
+ 1,
+*Nset, nset=S4, instance=ELEMENT-3D-1
+  3,  4,  7,  8, 10, 15, 19, 20
+*Elset, elset=S4, instance=ELEMENT-3D-1
+ 1,
+*Nset, nset=S5, instance=ELEMENT-3D-1, generate
+  5,  12,   1
+*Elset, elset=S5, instance=ELEMENT-3D-1
+ 1,
+*Nset, nset=S6, instance=ELEMENT-3D-1
+  2,  4,  6,  8, 11, 14, 17, 19
+*Elset, elset=S6, instance=ELEMENT-3D-1
+ 1,
+*End Assembly
+** 
+** MATERIALS
+** 
+*Material, name=NOR-SAND
+*DEPVAR
+50
+*USER MATERIAL, CONSTANTS=11
+1.27,0.851,0.497,0.3,200,300,0.5,0.3,
+3.5,1,1.e-7
+*INITIAL CONDITIONS, TYPE=SOLUTION, USER
+** 
+** BOUNDARY CONDITIONS
+** 
+** Name: S2-3,8 Type: Displacement/Rotation
+*Boundary
+S2, 1, 1
+S2, 2, 2
+S2, 3, 3
+*Boundary
+S3, 1, 1
+S3, 2, 2
+S3, 3, 3
+** Name: S4-3 Type: Displacement/Rotation
+*Boundary
+S4, 3, 3
+** Name: S5-1 Type: Displacement/Rotation
+*Boundary
+S5, 1, 1
+** Name: S6-2 Type: Displacement/Rotation
+*Boundary
+S6, 2, 2
+*INITIAL CONDITIONS, TYPE=SOLUTION, USER
+*INITIAL CONDITIONS, TYPE=STRESS, GEOSTATIC
+ALLN, -100, 0.0, -100, 1.0, 1.0, 1.0
+** ----------------------------------------------------------------
+** 
+** STEP: Step-1
+** 
+*Step, name=Step-1
+*Geostatic
+*DLOAD
+S1, P6, 100.
+S3, P2, 100.
+S2, P3, 100.
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=1
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history
+*Node Output, nset=ALLN
+POR, U1, U2, U3, UR1, UR2, UR3
+*Element Output, elset=ALLN
+E11, E22, E33, LE11, LE22, LE33, MISES, PRESS, S11, S22, S33, SAT, VOIDR
+*El Print, freq=0
+*Node Print, freq=0
+*End Step
+** ----------------------------------------------------------------
+** 
+** STEP: Step-2
+** 
+*Step, name=Step-2, inc=1000
+*Static
+1.d-3, 1., 1.d-4, 1.d-2
+** 
+** BOUNDARY CONDITIONS
+** 
+** Name: S2-3,8 Type: Displacement/Rotation
+*Boundary, op=NEW
+S2, 3, 3, -0.4
+** Name: S4-3 Type: Displacement/Rotation
+*Boundary, op=NEW
+S4, 3, 3
+** Name: S5-1 Type: Displacement/Rotation
+*Boundary, op=NEW
+S5, 1, 1
+** Name: S6-2 Type: Displacement/Rotation
+*Boundary, op=NEW
+S6, 2, 2
+** 
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=1
+** 
+** FIELD OUTPUT: F-Output-1
+** 
+*Output, field, variable=PRESELECT
+*Element Output, elset=ALLN
+SDV
+** 
+** HISTORY OUTPUT: H-Output-1
+** 
+*Output, history
+*Node Output, nset=ALLN
+U1, U2, U3, UR1, UR2, UR3
+*Element Output, elset=ALLN
+E11, E22, E33, LE11, LE22, LE33, MISES, PRESS, S11, S22, S33, SDV
+*End Step
